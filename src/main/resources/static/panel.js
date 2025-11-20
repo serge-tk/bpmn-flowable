@@ -139,11 +139,8 @@ class BPMNPropertiesPanel {
                 return values.length > 0 ? values.join('\n') : null;
             }
 
-            case 'flowable:field':
-                return this.getFlowableFieldValue(businessObject, fieldId);
-
-            case 'flowable:field[]':
-                return this.getFlowableExpressionValue(businessObject, fieldId);
+            case 'condition':
+                return this.getConditionValue(businessObject, fieldId);
 
             default:
                 return null;
@@ -178,22 +175,10 @@ class BPMNPropertiesPanel {
         return null;
     }
 
-    getFlowableExpressionValue(businessObject, fieldName) {
-        if (!businessObject.extensionElements) return null;
-
-        const values = businessObject.extensionElements.values;
-        if (!values) return null;
-
-        for (const value of values) {
-            if (value.$type === 'flowable:field' && value.name === fieldName) {
-                if (value.expression) {
-                    return value.expression;
-                } else if (value.expressions && Array.isArray(value.expressions)) {
-                    return value.expressions.join('\n');
-                }
-            }
-        }
-        return null;
+    getConditionValue(businessObject, fieldName) {
+        const expr = businessObject.conditionExpression;
+        if (!expr) return null;
+        return expr.body;
     }
 
     renderProperties() {
@@ -584,6 +569,10 @@ class BPMNPropertiesPanel {
             case 'flowable:expression':
                 this.updateFlowableExpressionValue(businessObject, fieldId, value);
                 break;
+
+            case 'condition':
+                this.updateConditionValue(businessObject, fieldId, value);
+                break;
         }
     }
 
@@ -705,6 +694,25 @@ class BPMNPropertiesPanel {
         this.modeling.updateProperties(this.currentElement, {
             extensionElements: extensionElements.values.length > 0 ? extensionElements : undefined
         });
+    }
+
+    updateConditionValue(businessObject, fieldName, value) {
+        const trimmedValue = value ? value.trim() : '';
+        if (trimmedValue) {
+            let expr = businessObject.conditionExpression;
+            if (expr) {
+                expr.body = trimmedValue;
+            } else {
+                expr = this.moddle.create('bpmn:FormalExpression', { body: trimmedValue });
+            }
+            this.modeling.updateProperties(this.currentElement, { conditionExpression: expr });
+        } else {
+            if (businessObject.conditionExpression) {
+                this.modeling.updateProperties(this.currentElement, { conditionExpression: null });
+            }
+            return;
+        }
+
     }
 
     updateElementType() {

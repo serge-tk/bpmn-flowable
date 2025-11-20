@@ -1,67 +1,56 @@
+const flowableModdleDescriptor =
+    {
+         name: 'Flowable',
+         uri: 'http://flowable.org/bpmn',
+         prefix: 'flowable',
 
-
-// Инициализация приложения с Flowable расширениями
-document.addEventListener('DOMContentLoaded', function() {
-    // Упрощенная конфигурация Flowable - только базовые типы
-    const flowableModdleDescriptor = {
-                                         name: 'Flowable',
-                                         uri: 'http://flowable.org/bpmn',
-                                         prefix: 'flowable',
-
-                                         types: [
-                                            {
-                                              name: 'field',
-                                              superClass: ['Element'],
-                                              properties: [
-                                                { name: 'name', type: 'String', isAttr: true },
-                                                { name: 'stringValue', type: 'String', isAttr: true },
-                                                { name: 'expression', type: 'String', isAttr: true },
-                                                { name: 'stringChildren', type: 'flowable:string', isMany: true },
-                                                { name: 'expressionChildren', type: 'flowable:expression', isMany: true }
-                                              ]
-                                            },
-                                           {
-                                             name: 'string',
-                                             superClass: ['Element'],
-                                             properties: [
-                                               { name: 'name', type: 'String', isAttr: true },
-                                               { name: 'stringValue', type: 'String', isAttr: true },
-                                               { name: 'expression', type: 'String', isAttr: true },
-                                               { name: 'stringChildren', type: 'flowable:string', isMany: true },
-                                               { name: 'expressionChildren', type: 'flowable:expression', isMany: true }
-                                             ]
-                                           },
-                                           {
-                                             name: 'expression',
-                                             superClass: ['Element'],
-                                             properties: [
-                                               { name: 'value', type: 'String', isAttr: true },
-                                               { name: 'stringChildren', type: 'flowable:string', isMany: true },
-                                               { name: 'expressionChildren', type: 'flowable:expression', isMany: true }
-                                             ]
-                                           }
-                                         ]
-                                       };
-
-    const bpmnModeler = new BpmnJS({
-        container: '#bpmn-canvas',
-        moddleExtensions: {
-            flowable: flowableModdleDescriptor
-        }
-    });
+         types: [
+            {
+              name: 'field',
+              superClass: ['Element'],
+              properties: [
+                { name: 'name', type: 'String', isAttr: true },
+                { name: 'stringValue', type: 'String', isAttr: true },
+                { name: 'expression', type: 'String', isAttr: true },
+                { name: 'stringChildren', type: 'flowable:string', isMany: true },
+                { name: 'expressionChildren', type: 'flowable:expression', isMany: true }
+              ]
+            },
+           {
+             name: 'string',
+             superClass: ['Element'],
+             properties: [
+               { name: 'name', type: 'String', isAttr: true },
+               { name: 'stringValue', type: 'String', isAttr: true },
+               { name: 'expression', type: 'String', isAttr: true },
+               { name: 'stringChildren', type: 'flowable:string', isMany: true },
+               { name: 'expressionChildren', type: 'flowable:expression', isMany: true }
+             ]
+           },
+           {
+             name: 'expression',
+             superClass: ['Element'],
+             properties: [
+               { name: 'value', type: 'String', isAttr: true },
+               { name: 'stringChildren', type: 'flowable:string', isMany: true },
+               { name: 'expressionChildren', type: 'flowable:expression', isMany: true }
+             ]
+           }
+         ]
+    };
 
     // Упрощенный XML без сложных расширений для тестирования
     const testXML = `<?xml version="1.0" encoding="UTF-8"?>
-<definitions 
-    xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" 
-    xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" 
-    xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" 
+<definitions
+    xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+    xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+    xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
     xmlns:flowable="http://flowable.org/bpmn"
     targetNamespace="http://www.flowable.org/processdef">
-    
+
     <process id="simple-process" name="Simple Process" isExecutable="true">
         <startEvent id="startEvent" name="Start" />
-        
+
         <userTask id="userTask" name="Review Request">
             <documentation>Documentation 1</documentation>
             <documentation>Documentation 2</documentation>
@@ -72,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <incoming>flow1</incoming>
             <outgoing>flow2</outgoing>
         </userTask>
-        
+
         <serviceTask id="serviceTask" name="Call API" flowable:type="http">
             <documentation>Documentation 222</documentation>
             <extensionElements>
@@ -82,16 +71,18 @@ document.addEventListener('DOMContentLoaded', function() {
             <incoming>flow2</incoming>
             <outgoing>flow3</outgoing>
         </serviceTask>
-        
+
         <endEvent id="endEvent" name="End">
             <incoming>flow3</incoming>
         </endEvent>
-        
+
         <sequenceFlow id="flow1" sourceRef="startEvent" targetRef="userTask" />
-        <sequenceFlow id="flow2" sourceRef="userTask" targetRef="serviceTask" />
+        <sequenceFlow id="flow2" sourceRef="userTask" targetRef="serviceTask">
+            <conditionExpression xsi:type="tFormalExpression"><![CDATA[variable > 0]]></conditionExpression>
+        </sequenceFlow>
         <sequenceFlow id="flow3" sourceRef="serviceTask" targetRef="endEvent" />
     </process>
-    
+
     <bpmndi:BPMNDiagram id="BPMNDiagram_1">
         <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="simple-process">
             <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="startEvent">
@@ -122,20 +113,21 @@ document.addEventListener('DOMContentLoaded', function() {
     </bpmndi:BPMNDiagram>
 </definitions>`;
 
+// Инициализация приложения с Flowable расширениями
+document.addEventListener('DOMContentLoaded', function() {
+    // Упрощенная конфигурация Flowable - только базовые типы
+
+    const bpmnModeler = new BpmnJS({
+        container: '#bpmn-canvas',
+        moddleExtensions: {
+            flowable: flowableModdleDescriptor
+        }
+    });
+
     // Загрузка BPMN диаграммы
     bpmnModeler.importXML(testXML)
         .then(() => {
             console.log('BPMN diagram loaded successfully');
-            
-            // Автоматически выбираем первый элемент для демонстрации
-            setTimeout(() => {
-                const elementRegistry = bpmnModeler.get('elementRegistry');
-                const userTask = elementRegistry.get('userTask');
-                if (userTask) {
-                    bpmnModeler.get('selection').select(userTask);
-                    console.log('Selected user task with extensions:', userTask.businessObject.extensionElements);
-                }
-            }, 500);
         })
         .catch(err => {
             console.error('Error loading BPMN diagram:', err);
@@ -144,13 +136,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Инициализация панели свойств
     const propertiesPanel = new BPMNPropertiesPanel(bpmnModeler, CONFIG);
-function loadBPMNFromFile(file) {
-        if (!file) return;
 
+    function loadBPMNFromFile(file) {
+        if (!file) return;
         const reader = new FileReader();
         reader.onload = function(e) {
             const xmlContent = e.target.result;
-
             bpmnModeler.importXML(xmlContent)
                 .then(() => {
                     console.log('BPMN diagram loaded from file successfully');
@@ -161,7 +152,6 @@ function loadBPMNFromFile(file) {
                     showNotification('Ошибка загрузки диаграммы: ' + err.message, 'error');
                 });
         };
-
         reader.readAsText(file);
     }
 
@@ -337,24 +327,6 @@ function loadBPMNFromFile(file) {
     }
 
     // ========== ДОБАВЛЕНИЕ ЭЛЕМЕНТОВ УПРАВЛЕНИЯ В ИНТЕРФЕЙС ==========
-
-    // Создаем панель управления
-    const controlsHTML = `
-        <div style="margin: 10px; padding: 15px; background: #f8f9fa; border-radius: 5px; border: 1px solid #ddd;">
-            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <input type="file" id="bpmn-file-input" accept=".bpmn,.xml" style="display: none;">
-                <button onclick="document.getElementById('bpmn-file-input').click()">Upload</button>
-                <button onclick="window.exportBPMNToFile()">Download</button>
-                <button onclick="window.showXMLInWindow()">Show XML</button>
-            </div>
-        </div>
-    `;
-
-    // Добавляем панель управления перед канвасом
-    const canvasContainer = document.querySelector('#bpmn-canvas').parentNode;
-    const controlsDiv = document.createElement('div');
-    controlsDiv.innerHTML = controlsHTML;
-    canvasContainer.insertBefore(controlsDiv, document.querySelector('#bpmn-canvas'));
 
     // Обработчик выбора файла
     document.getElementById('bpmn-file-input').addEventListener('change', function(e) {

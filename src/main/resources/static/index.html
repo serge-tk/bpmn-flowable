@@ -10,16 +10,28 @@
 </head>
 <body>
     <div class="container">
-        <div class="bpmn-container">
-            <div id="bpmn-canvas"></div>
+        <!-- Панель с кнопками сверху -->
+        <div class="top-panel">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <input type="file" id="bpmn-file-input" accept=".bpmn,.xml" style="display: none;">
+                <button onclick="document.getElementById('bpmn-file-input').click()">Upload</button>
+                <button onclick="window.exportBPMNToFile()">Download</button>
+                <button onclick="window.showXMLInWindow()">Show XML</button>
+            </div>
         </div>
-        <div class="properties-panel" id="properties-panel">
-            <div class="properties-content" id="properties-content">
-                <div class="no-selection">Select an element to edit properties</div>
+
+        <!-- Основная область контента -->
+        <div class="content-area">
+            <div class="bpmn-container">
+                <div id="bpmn-canvas"></div>
+            </div>
+            <div class="properties-panel" id="properties-panel">
+                <div class="properties-content" id="properties-content">
+                    <div class="no-selection">Select an element to edit properties</div>
+                </div>
             </div>
         </div>
     </div>
-
     
     <script src="https://unpkg.com/bpmn-js@18.9.0/dist/bpmn-modeler.development.js"></script>
     <script src="config.js"></script>

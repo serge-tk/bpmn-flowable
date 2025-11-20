@@ -4,7 +4,16 @@
 const CONFIG = {
     "version": "1.0",
     "description": "Flowable Properties Panel Configuration",
+    "locations": {
+        "condition": "conditionExpression.body",
+        "attribute": "[${id}]"
+    },
     "elements": {
+        "bpmn:SequenceFlow": {
+           "fields": [
+                { "id": "conditionExpression", "location": "condition" }
+           ]
+        },
         "bpmn:ScriptTask": {
            "fields": [
                 { "id": "scriptFormat", "location": "attribute" },
