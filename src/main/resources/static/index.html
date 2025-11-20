@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BPMN Properties Panel</title>
+    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@18.9.0/dist/assets/diagram-js.css">
+    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@18.9.0/dist/assets/bpmn-js.css">
+    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@18.9.0/dist/assets/bpmn-js-properties-panel.css">
+    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@18.9.0/dist/assets/bpmn-font/css/bpmn.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="bpmn-container">
+            <div id="bpmn-canvas"></div>
+        </div>
+        <div class="properties-panel" id="properties-panel">
+            <div class="properties-content" id="properties-content">
+                <div class="no-selection">Select an element to edit properties</div>
+            </div>
+        </div>
+    </div>
+
+    
+    <script src="https://unpkg.com/bpmn-js@18.9.0/dist/bpmn-modeler.development.js"></script>
+    <script src="config.js"></script>
+    <script src="panel.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
